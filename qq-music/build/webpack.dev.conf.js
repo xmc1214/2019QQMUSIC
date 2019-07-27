@@ -95,6 +95,48 @@ const devWebpackConfig = merge(baseWebpackConfig, {
                     }).catch((e) => {
                         console.log(e)
                     })
+                }),
+                app.get('/api/getSongList', function(req, res) {
+                    var url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+                    axios.get(url, {
+                        headers: {
+                            referer: 'https://y.qq.com/',
+                            host: 'c.y.qq.com'
+                        },
+                        params: req.query
+                    }).then((response) => {
+                        res.json(response.data)
+                    }).catch((e) => {
+                        console.log(e)
+                    })
+                }),
+                app.get('/api/getMvListAndTag', function(req, res) {
+                    let url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+                    axios.get(url, {
+                        headers: {
+                            referer: 'https://y.qq.com/',
+                            host: 'c.y.qq.com'
+                        },
+                        params: req.query
+                    }).then((response) => {
+                        res.json(response.data)
+                    }).catch((e) => {
+                        console.log(e)
+                    })
+                }),
+                app.get('/api/search', function(req, res) {
+                    let url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+                    axios.get(url, {
+                        headers: {
+                            referer: 'https://y.qq.com/',
+                            host: 'c.y.qq.com'
+                        },
+                        params: req.query
+                    }).then((response) => {
+                        res.json(response.data)
+                    }).catch((e) => {
+                        console.log(e)
+                    })
                 })
         }
     },

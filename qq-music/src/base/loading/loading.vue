@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <img width="24" height="24" src="./loading.png">
+    <img width="50" height="50" src="./loading.png">
     <p class="desc">{{title}}</p>
   </div>
 </template>
@@ -22,6 +22,6 @@
     text-align: center
     .desc
       line-height: 20px
-      font-size: $font-size-small
+      font-size: $font-size-large
       color: $color-text
 </style>

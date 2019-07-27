@@ -1,59 +1,89 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll
-      class="recommend-content"
-      :scrollY="true"
-      :data="discList"
-      :stopPropagation="true"
-      ref="scroll"
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+      pulling-text="下拉加载最新内容"
+      success-text="已显示最新内容"
     >
-      <div>
-        <div v-if="recommends.length" class="slider-wrapper">
-          <slider>
-            <div v-for="(item,index) in recommends" :key="index">
-              <a :href="item.linkUrl">
-                <img class="needsclick" @load="loadImage" :src="item.picUrl" />
-              </a>
+    </van-pull-refresh>
+      <scroll
+        class="recommend-content"
+        :scrollY="true"
+        :data="discList"
+        :stopPropagation="true"
+        ref="scroll"
+      >
+        <div>
+          <div v-if="recommends.length" class="slider-wrapper">
+            <slider>
+              <div v-for="(item,index) in recommends" :key="index">
+                <a :href="item.linkUrl">
+                  <img class="needsclick" @load="loadImage" :src="item.picUrl" />
+                </a>
+              </div>
+            </slider>
+          </div>
+          <div class="recommend-double">
+            <div class="recommend-left">
+              <div class="icon">
+                <img
+                  src="http://p.qpic.cn/music_cover/lYiaEbscaryrFiaicJFp8euuRMjfEaYwPochibTJMsxkJCXoy7jEchqwIg/600"
+                  alt="新歌新碟"
+                />
+              </div>
+              <div class="text">
+                <h2 class="name">新歌新碟</h2>
+                <h3 class="desc">洗茶极致低音诱惑</h3>
+              </div>
             </div>
-          </slider>
-        </div>
-        <div class="recommend-double">
-          <div class="recommend-left">
-            <div class="icon">
-              <img
-                src="http://p.qpic.cn/music_cover/lYiaEbscaryrFiaicJFp8euuRMjfEaYwPochibTJMsxkJCXoy7jEchqwIg/600"
-                alt="新歌新碟"
-              />
-            </div>
-            <div class="text">
-              <h2 class="name">新歌新碟</h2>
-              <h3 class="desc">洗茶极致低音诱惑</h3>
+            <div class="recommend-right">
+              <div class="icon">
+                <img
+                  src="http://p.qpic.cn/music_cover/Ye8xJJLS3zf0lX5xTNk0TFjSJkrLt6wgBCZWO4esCjTYJsa9nxia6gw/600"
+                  alt="数字专辑"
+                />
+              </div>
+              <div class="text">
+                <h2 class="name">数字专辑.票务</h2>
+                <h3 class="desc">林俊杰疗愈新作</h3>
+              </div>
             </div>
           </div>
-          <div class="recommend-right">
-            <div class="icon">
-              <img
-                src="http://p.qpic.cn/music_cover/Ye8xJJLS3zf0lX5xTNk0TFjSJkrLt6wgBCZWO4esCjTYJsa9nxia6gw/600"
-                alt="数字专辑"
-              />
-            </div>
-            <div class="text">
-              <h2 class="name">数字专辑.票务</h2>
-              <h3 class="desc">林俊杰疗愈新作</h3>
-            </div>
+          <div class="recommend-list">
+            <list
+              :listName="'官方歌单'"
+              :data="discList"
+              :horizontal="horizontal"
+              @select="selectItem"
+            />
+            <list
+              :listName="'达人歌单'"
+              :data="goodDiscList"
+              :horizontal="horizontal"
+              @select="selectItem"
+            />
+            <list
+              :listName="'最新专辑'"
+              :data="goodDiscList"
+              :horizontal="horizontal"
+              @select="selectItem"
+            />
+            <list
+              :listName="'一起听'"
+              :data="goodDiscList"
+              :horizontal="horizontal"
+              @select="selectItem"
+            />
           </div>
         </div>
-        <div class="recommend-list">
-          <list :listName="'官方歌单'" :data="discList" :horizontal="horizontal" />
-          <list :listName="'达人歌单'" :data="goodDiscList" :horizontal="horizontal" />
-          <list :listName="'最新专辑'" :data="goodDiscList" :horizontal="horizontal" />
-          <list :listName="'一起听'" :data="goodDiscList" :horizontal="horizontal" />
+        <div class="loading-container" v-show="!discList.length">
+          <loading />
         </div>
-      </div>
-      <div class="loading-container" v-show="!discList.length">
-        <loading />
-      </div>
-    </scroll>
+      </scroll>
+    <transition name="slide">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -61,16 +91,18 @@
 import Scroll from "base/scroll/scroll";
 import List from "base/list/list";
 import Loading from "base/loading/loading";
-import { getRecommend, getDiscList } from "api/recommend";
+import { getRecommend, getDiscList ,getGfsongList} from "api/recommend";
 import { ERR_OK } from "api/config";
 import Slider from "base/slider/slider";
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
       recommends: [],
       discList: [],
       goodDiscList: [],
-      horizontal: true
+      horizontal: true,
+      isLoading: false
     };
   },
   components: {
@@ -84,6 +116,17 @@ export default {
     this._getDiscList();
   },
   methods: {
+    onRefresh() {
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 1000);
+    },
+    selectItem(item) {
+      this.$router.push({
+        path: `/music/recommend/${item.dissid}`
+      });
+      this.setDisc(item);
+    },
     loadImage() {
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh();
@@ -106,7 +149,10 @@ export default {
           this.goodDiscList = data.reverse();
         }
       });
-    }
+    },
+    ...mapMutations({
+      setDisc: "SET_DISC"
+    })
   }
 };
 </script>
@@ -173,5 +219,9 @@ export default {
       width: 100%
       top: 50%
       transform: translateY(-50%)
+.slide-enter-active, .slide-leave-active
+  transition: all 0.3s
+.slide-enter, .slide-leave-to
+  transform: translate3d(100%, 0, 0)
 </style>
 

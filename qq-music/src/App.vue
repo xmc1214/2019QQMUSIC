@@ -1,29 +1,49 @@
 <template>
   <div id="app">
-    <router-view></router-view>
-    <player></player>
-   <div class="bottomTab"> <bottom-tab></bottom-tab></div>
+    <transition name="boundle" mode="out-in">
+      <router-view></router-view>
+    </transition>
+    <player ref="player"></player>
+    <div class="bottomTab">
+      <bottom-tab v-if="tabDisplay"></bottom-tab>
+    </div>
   </div>
 </template>
 
 <script>
-
-import BottomTab from 'components/bottomTab/bottomTab'
-import Player from 'components/player/player'
+import { mapGetters } from "vuex";
+import BottomTab from "components/bottomTab/bottomTab";
+import Player from "components/player/player";
 export default {
-  name: 'App',
-  components:{
+  name: "App",
+  data(){
+    return{
+    }
+  },
+  components: {
     BottomTab,
     Player
+  },
+  computed: {
+    tabDisplay() {
+      return this.tabDisplay;
+    },
+    ...mapGetters(["tabDisplay"])
+  },
+  methods: {
   }
-}
+};
 </script>
 
 <style lang="stylus">
 #app
-  min-width 350px
+  min-width: 350px
   .bottomTab
-    width 100%
-    position fixed
-    bottom 0
+    width: 100%
+    position: fixed
+    bottom: 0
+.boundle-enter-active, .boundle-leave-active
+  transition: all 0.3s
+.boundle-enter, .boundle-leave-to
+  transform: translate3d(0, -100%, 0)
 </style>

@@ -24,6 +24,27 @@ const mutations = {
     },
     [types.SET_PLAYLIST_URL](state, keyUrl) {
         state.playList[keyUrl.index].url = keyUrl.url
+    },
+    [types.SET_DISC](state, disc) {
+        state.disc = disc
+    },
+    [types.SET_TOP_LIST](state, topList) {
+        state.topList = topList
+    },
+    [types.SET_TAB_DISPLAY](state, tabDisplay) {
+        state.tabDisplay = tabDisplay
+    },
+    [types.SET_BOTTOM](state, bottom) {
+        state.bottom = bottom
+    },
+    [types.SET_BGCOLOR](state, bgColor) {
+        state.bgColor = bgColor
+    },
+    [types.SET_SEARCH_HISTORY](state, searchHistory) {
+        state.searchHistory = searchHistory
+    },
+    [types.SET_FAVORITE_LIST](state, favoriteList) {
+        state.favoriteList = favoriteList
     }
 }
 export default mutations

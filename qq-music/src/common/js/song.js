@@ -44,6 +44,20 @@ export function createSong(musicData) {
         url: ''
     })
 }
+export function createDisc(musicData) {
+
+
+    return new Song({
+        id: musicData.id,
+        mid: musicData.mid,
+        singer: filterSinger(musicData.singer),
+        name: musicData.name,
+        album: musicData.album.name,
+        duration: musicData.interval,
+        image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.album.mid}.jpg?max_age=2592000`,
+        url: ''
+    })
+}
 
 function filterSinger(singer) {
     let ret = []

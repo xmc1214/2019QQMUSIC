@@ -81,20 +81,26 @@
               <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon icon-not-favorite"></i>
+              <i class="icon" @click="toggleFavorite(currentSong)" :class="getFavoriteIcon"></i>
             </div>
           </div>
         </div>
       </div>
     </transition>
     <transition name="mini">
-      <div class="mini-player" v-show="!fullScreen" @click="open">
+      <div
+        class="mini-player"
+        v-show="!fullScreen"
+        @click="open"
+        :style="playBottom"
+        ref="miniPlayer"
+      >
         <div class="icon">
           <img width="40" height="40" :src="currentSong.image" alt :class="cdCls" />
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name + '&nbsp;-&nbsp;'"></h2>
-          <h2 class="name"  v-html="currentSong.singer"></h2>
+          <h2 class="name" v-html="currentSong.singer"></h2>
         </div>
         <div class="control">
           <progress-circle :radius="radius" :percent="percent">
@@ -119,7 +125,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import animations from "create-keyframe-animation";
 import { prefixStyle } from "common/js/dom";
 import getUrl from "common/js/getUrl";
@@ -152,6 +158,14 @@ export default {
     this.touch = {};
   },
   methods: {
+    ...mapActions(["saveFavoriteList", "deleteFavoriteList"]),
+    toggleFavorite(currentSong) {
+      if (this.getFavoriteIcon === "icon-favorite") {
+        this.deleteFavoriteList(currentSong);
+      } else {
+        this.saveFavoriteList(currentSong);
+      }
+    },
     middleTouchStart(e) {
       this.touch.initiated = true;
       const touch = e.touches[0];
@@ -320,6 +334,7 @@ export default {
       }
       if (this.playList.length === 1) {
         this.loop();
+        return
       } else {
         let index = this.currentIndex + 1;
         if (index === this.playList.length) {
@@ -438,12 +453,21 @@ export default {
       setPlayingState: "SET_PLAYING_STATE",
       setCurrentIndex: "SET_CURRENT_INDEX",
       setPlaylistUrl: "SET_PLAYLIST_URL",
-      setPlayMode: "SET_PLAY_MODE",
-      setPlayList: "SET_PLAYLIST"
+      setPlayMode: "SET_PLAY_MODE"
     }),
     percentChange() {}
   },
   computed: {
+    getFavoriteIcon() {
+      return this.favoriteList.some(song => {
+        return this.currentSong.mid === song.mid;
+      })
+        ? "icon-favorite"
+        : "icon-not-favorite";
+    },
+    playBottom() {
+      return `bottom:${this.bottom}px;background:${this.bgColor}`;
+    },
     iconMode() {
       return this.mode === playMode.sequence
         ? "icon-sequence"
@@ -470,7 +494,10 @@ export default {
       "playing",
       "currentIndex",
       "mode",
-      "sequenceList"
+      "sequenceList",
+      "bottom",
+      "bgColor",
+      "favoriteList"
     ])
   },
   watch: {
@@ -479,11 +506,11 @@ export default {
       if (this.currentLyric) {
         this.currentLyric.stop();
       }
-      clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-          this.$refs.audio.play()
-          this.getLyric()
-        }, 1000)
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.$refs.audio.play();
+        this.getLyric();
+      }, 1000);
     },
     playing(newPlaying) {
       const audio = this.$refs.audio;
@@ -676,13 +703,13 @@ export default {
         transform: translate3d(0, 100px, 0)
   .mini-player
     display: flex
-    align-items flex-end
+    align-items: flex-end
     position: fixed
     left: 0
-    bottom: 50px
+    // bottom: 50px
     z-index: 180
     width: 100%
-    height: 60px
+    height: 50px
     &.mini-enter-active, &.mini-leave-active
       transition: all 0.4s
     &.mini-enter, &.mini-leave-to
@@ -699,8 +726,8 @@ export default {
           animation-play-state: paused
     .text
       display: flex
-      justify-content:flex-start
-      margin-bottom 10px
+      justify-content: flex-start
+      margin-bottom: 10px
       flex: 1
       overflow: hidden
       .name
@@ -710,7 +737,7 @@ export default {
     .control
       flex: 0 0 30px
       width: 30px
-      padding:0 10px 5px 5px
+      padding: 0 10px 5px 5px
       .icon-play-mini, .icon-pause-mini, .icon-playlist
         font-size: 25px
         color: $color-theme-d

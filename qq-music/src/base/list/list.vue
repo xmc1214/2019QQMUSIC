@@ -48,6 +48,11 @@ export default {
     let data = this.data
     this.scrollX = horizontal;
     this.dataList = data;
+  },
+  methods:{
+    selectItem(item){
+      this.$emit('select',item)
+    }
   }
 };
 </script>

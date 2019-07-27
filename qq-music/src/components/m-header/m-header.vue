@@ -1,16 +1,23 @@
 <template>
   <div class="m-header">
     <div class="text-left">{{title}}</div>
-    <button class="header-search">
-      <div class="search"></div>搜索
+    <button class="header-search" @click="search">
+      <div class="search"></div>
+      <span>搜索</span>
     </button>
     <div class="icon" :class="rightIcon"></div>
+    
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 export default {
-  props: ["title", "rightIcon"]
+  props: ["title", "rightIcon"],
+  methods:{
+    search(){
+      this.$emit('openSearch')
+    }
+  }
 };
 </script>
 
@@ -34,7 +41,7 @@ export default {
     width: 100%
     border: none
     background-color: #222637
-    color: $color-text-d
+    color: $color-text-ll
     border-radius: 15px
     margin-left: 10px
     margin-right: 10px
@@ -43,6 +50,7 @@ export default {
     display: flex
     justify-content: center
     align-items center
+    outline none
     .search
       display: inline-block
       width: 20px
@@ -50,6 +58,9 @@ export default {
       bg-image('search')
       background-size: 100% 100%
       margin-right: 5px
+    span 
+      color $color-text-ll
+      font-size $font-size-medium
   .icon
     width: 25px
     height: 25px

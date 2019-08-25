@@ -23,7 +23,6 @@ Vue.prototype.$store = store
 Vue.prototype.$api = api
 fastclick.attach(document.body)
 Vue.config.productionTip = false
-import vConsole from 'vconsole'
 console.log('test')
 import 'common/stylus/index.styl'
 /* eslint-disable no-new */

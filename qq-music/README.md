@@ -64,3 +64,5 @@ vue-router实现路由间的跳转，vuex管理播放歌曲的状态数据，bet
 ![mWb7b8.png](https://s2.ax1x.com/2019/08/26/mWb7b8.png "歌手详情")
 ![mWbXCj.png](https://s2.ax1x.com/2019/08/26/mWbXCj.png "播放界面")
 ![mWbTDf.png](https://s2.ax1x.com/2019/08/26/mWbTDf.png "搜索界面")
+# 总结
+看到界面设计后是不是有一种这就是QQ音乐本人呢，哈哈，其实还有很多没有完善，最新版qq音乐的更换主题功能是本项目后续计划加入的功能，打算使用stylus或者postcss对样式进行变量化，进行整体替换样式达到主题更换
